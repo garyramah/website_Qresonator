@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qresonator.com — Master Quantum Resonance</title>
+<meta name="description" content="An introduction to quantum resonators: how they work, what the published research shows, and a classical resonance demo.">
+<style>
+  :root{
+    --bg:#05080f; --bg2:#070d18; --panel:#0a1220; --line:#16233a; --line2:#1e2f4d;
+    --ink:#e8eef7; --mut:#9fb0c7; --dim:#6b7d97;
+    --cyan:#22d3ee; --cyan2:#67e8f9; --cyan-dim:#0e7490;
+    --amber:#fbbf24; --silver:#cbd5e1;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:var(--cyan2)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  /* header */
+  header{position:sticky;top:0;z-index:20;background:rgba(5,8,15,.88);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;gap:26px;height:58px}
+  .wordmark{font-weight:800;letter-spacing:.02em;font-size:19px;color:var(--ink);text-decoration:none}
+  .wordmark b{color:var(--cyan)}
+  .nav nav{margin-left:auto;display:flex;gap:22px}
+  .nav nav a{color:var(--mut);text-decoration:none;font-size:14px}
+  .nav nav a:hover{color:var(--cyan2)}
+  @media(max-width:640px){.nav nav{display:none}}
+  /* hero */
+  .hero{padding:84px 0 56px;position:relative;overflow:hidden;
+    background:
+      radial-gradient(900px 420px at 78% -10%, rgba(34,211,238,.14), transparent 60%),
+      radial-gradient(700px 380px at 8% 110%, rgba(251,191,36,.06), transparent 60%),
+      linear-gradient(180deg,#070d18,#05080f)}
+  .hero .wave{position:absolute;right:-40px;top:30px;width:520px;max-width:60vw;opacity:.5;pointer-events:none}
+  .kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);font-weight:700}
+  h1{font-size:clamp(40px,6.4vw,68px);line-height:1.04;margin:14px 0 8px;letter-spacing:-.02em;font-weight:800}
+  .tagline{font-size:clamp(20px,3vw,28px);font-weight:700;color:var(--cyan2);letter-spacing:.01em;margin:0 0 18px}
+  .tagline span{color:var(--amber)}
+  .sub{max-width:640px;color:var(--mut);font-size:18px;margin:0 0 30px}
+  .btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn{display:inline-block;padding:13px 24px;border-radius:10px;font-weight:700;font-size:15px;
+    text-decoration:none;border:1px solid var(--cyan);transition:.15s}
+  .btn.solid{background:var(--cyan);color:#04222b}
+  .btn.solid:hover{background:var(--cyan2)}
+  .btn.ghost{color:var(--cyan2);background:transparent}
+  .btn.ghost:hover{border-color:var(--cyan2);background:rgba(34,211,238,.08)}
+  .fineprint{margin-top:20px;font-size:13px;color:var(--dim);max-width:640px}
+  /* sections */
+  section{padding:64px 0;border-top:1px solid var(--line)}
+  .eyebrow{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);font-weight:700;margin-bottom:10px}
+  h2{font-size:clamp(26px,3.4vw,34px);line-height:1.2;margin:0 0 14px;letter-spacing:-.01em}
+  .lede{color:var(--mut);max-width:760px;margin:0 0 26px}
+  .lede b{color:var(--ink)}
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+  @media(max-width:760px){.steps{grid-template-columns:1fr}}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .step .n{font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--amber);text-transform:uppercase}
+  .step h3{margin:8px 0 8px;font-size:19px}
+  .step p{margin:0;color:var(--mut);font-size:15px}
+  .step p b{color:var(--ink)}
+  .cavity{margin-top:26px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .cavity svg{width:100%;height:auto;display:block}
+  .cavity figcaption{font-size:13px;color:var(--dim);margin-top:12px}
+  /* demo */
+  .demo-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
+  @media(max-width:860px){.demo-grid{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .panel h3{margin:0 0 4px;font-size:16px}
+  .panel .hint{font-size:13px;color:var(--dim);margin:0 0 12px}
+  canvas{width:100%;height:220px;display:block;background:#04070d;border:1px solid var(--line);border-radius:10px}
+  .controls{margin-top:18px;display:grid;gap:16px}
+  .ctl label{display:flex;justify-content:space-between;font-size:14px;color:var(--mut);margin-bottom:6px}
+  .ctl label output{color:var(--cyan2);font-weight:700;font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%;accent-color:var(--cyan);height:28px}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .chip{background:#04070d;border:1px solid var(--line2);border-radius:10px;padding:10px 14px;flex:1;min-width:130px}
+  .chip .k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .chip .v{font-size:18px;font-weight:800;color:var(--cyan2);font-variant-numeric:tabular-nums}
+  .caption{font-size:13px;color:var(--dim);margin-top:16px}
+  .caption b{color:var(--amber)}
+  /* field */
+  .field-label{display:inline-block;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.35);
+    color:var(--cyan2);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:700;margin-bottom:18px}
+  .papers{display:grid;gap:16px}
+  .paper{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px}
+  .paper .num{font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--amber);text-transform:uppercase}
+  .paper h3{margin:8px 0 6px;font-size:20px}
+  .paper .cite{font-size:14px;color:var(--mut);margin:0 0 12px}
+  .paper .cite a{color:var(--cyan2);text-decoration:none;border-bottom:1px dotted var(--cyan-dim)}
+  .paper p{margin:0;color:var(--mut);font-size:15px}
+  .paper p b{color:var(--ink)}
+  .scope{margin-top:18px;border:1px dashed var(--line2);border-radius:12px;padding:16px 18px;font-size:14px;color:var(--mut)}
+  .scope b{color:var(--ink)}
+  /* where */
+  .areas{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:760px){.areas{grid-template-columns:1fr}}
+  .area{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .area h3{margin:0 0 8px;font-size:18px}
+  .area p{margin:0;color:var(--mut);font-size:15px}
+  .area p b{color:var(--ink)}
+  /* mission */
+  .mvb{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.mvb{grid-template-columns:1fr}}
+  .mvb .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px}
+  .mvb .card h3{margin:0 0 8px;font-size:18px;color:var(--cyan2)}
+  .mvb .card p{margin:0;color:var(--mut);font-size:16px}
+  .mvb .card p b{color:var(--ink)}
+  .beliefs{grid-column:1 / -1}
+  .beliefs ul{margin:10px 0 0;padding-left:20px;color:var(--mut)}
+  .beliefs li{margin:6px 0}
+  .beliefs li b{color:var(--ink)}
+  .asp{font-size:13px;color:var(--dim);margin-top:18px;font-style:italic}
+  /* form */
+  form{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;max-width:640px}
+  .frow{margin-bottom:16px}
+  .frow label{display:block;font-size:14px;color:var(--mut);margin-bottom:6px}
+  .frow input,.frow select,.frow textarea{width:100%;background:#04070d;border:1px solid var(--line2);
+    border-radius:9px;color:var(--ink);padding:12px 14px;font-size:15px;font-family:inherit}
+  .frow input:focus,.frow select:focus,.frow textarea:focus{outline:2px solid var(--cyan-dim);border-color:var(--cyan)}
+  .frow textarea{min-height:96px;resize:vertical}
+  button[type=submit]{background:var(--cyan);color:#04222b;border:0;border-radius:10px;
+    padding:13px 26px;font-weight:800;font-size:15px;cursor:pointer}
+  button[type=submit]:hover{background:var(--cyan2)}
+  /* footer */
+  footer{border-top:1px solid var(--line);padding:34px 0 44px;color:var(--dim);font-size:14px}
+  footer .wordmark{font-size:16px}
+  footer p{max-width:760px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="wordmark" href="#top"><b>Q</b>resonator.com</a>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#field">The field</a>
+      <a href="#where">Where resonators matter</a>
+      <a href="#interest">Register interest</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero" id="top">
+  <svg class="wave" viewBox="0 0 520 260" fill="none" aria-hidden="true">
+    <path d="M0 130 C 65 30, 130 230, 195 130 S 325 30, 390 130 S 490 230, 520 130" stroke="#22d3ee" stroke-width="1.5" opacity=".55"/>
+    <path d="M0 130 C 65 80, 130 180, 195 130 S 325 80, 390 130 S 490 180, 520 130" stroke="#67e8f9" stroke-width="1" opacity=".35"/>
+    <path d="M0 130 H 520" stroke="#cbd5e1" stroke-width="1" opacity=".25" stroke-dasharray="3 6"/>
+    <circle cx="195" cy="130" r="5" fill="#fbbf24"/>
+    <circle cx="390" cy="130" r="4" fill="#22d3ee"/>
+    <text x="195" y="158" fill="#9fb0c7" font-size="12" text-anchor="middle" font-family="system-ui">antinode</text>
+    <text x="390" y="108" fill="#9fb0c7" font-size="12" text-anchor="middle" font-family="system-ui">antinode</text>
+    <text x="292" y="158" fill="#6b7d97" font-size="12" text-anchor="middle" font-family="system-ui">node</text>
+  </svg>
+  <div class="wrap">
+    <div class="kicker">Quantum resonators — an introduction</div>
+    <h1>Master Quantum Resonance</h1>
+    <p class="tagline">Resonate<span>.</span> Compute<span>.</span> Sense<span>.</span></p>
+    <p class="sub">A page about the resonator at the centre of circuit quantum electrodynamics — the component that stores a photon, couples it to a qubit, and reads the result out.</p>
+    <div class="btns">
+      <a class="btn solid" href="#interest">Register interest</a>
+      <a class="btn ghost" href="#field">Read the field</a>
+    </div>
+    <p class="fineprint">This page summarises published research by other groups and carries a classical resonance demo. It is not a product page: no resonator hardware, data, briefing, partnership, or newsletter is offered.</p>
+  </div>
+</div>
+
+<section id="how">
+  <div class="wrap">
+    <div class="eyebrow">How a resonator works — the field&rsquo;s method, not Qresonator&rsquo;s</div>
+    <h2>The component that holds the photon</h2>
+    <p class="lede">A resonator is a structure that stores energy in one oscillating mode and releases it slowly. In the circuit quantum electrodynamics work this page draws on, a microwave resonator stores photons and exchanges them coherently with a qubit. The resonator&rsquo;s quality factor, <b>Q</b>, measures how slowly it loses energy: a high-Q resonator holds its energy longer and answers in a narrower band.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="n">Step 1 · Couple</div>
+        <h3>Couple</h3>
+        <p>A superconducting qubit is placed next to a resonator — in Wallraff et al. (2004), a Cooper-pair box coupled to an on-chip cavity formed by a <b>superconducting transmission-line resonator</b>. When the qubit is tuned into resonance with the cavity, the system shows <b>vacuum Rabi splitting</b> — the signature that the strong-coupling regime has been reached.</p>
+      </div>
+      <div class="step">
+        <div class="n">Step 2 · Store</div>
+        <h3>Store</h3>
+        <p>In Paik et al. (2011), the qubit sits inside a <b>three-dimensional waveguide cavity</b> that suppresses decoherence while keeping the coupling to the control signal. The cavity stores the field the qubit couples to; qubit coherence times rose by <b>more than an order of magnitude</b> in this architecture.</p>
+      </div>
+      <div class="step">
+        <div class="n">Step 3 · Read out</div>
+        <h3>Read out</h3>
+        <p>When the qubit is detuned from the cavity, the resonator reads the qubit state out without destroying it — <b>dispersive quantum non-demolition readout</b> (Wallraff et al., 2004). In the three-dimensional architecture the cavity acts as the <b>entanglement bus and the readout circuit</b> (Paik et al., 2011).</p>
+      </div>
+    </div>
+
+    <figure class="cavity">
+      <svg viewBox="0 0 960 200" fill="none" aria-label="Diagram of a transmission-line resonator with a qubit coupled at an antinode">
+        <rect x="30" y="70" width="900" height="60" rx="8" stroke="#1e2f4d" stroke-width="1.5" fill="#0a1220"/>
+        <path d="M30 100 C 155 20, 280 180, 405 100 S 655 20, 780 100 S 905 180, 930 100" stroke="#22d3ee" stroke-width="2.5"/>
+        <path d="M30 100 C 155 60, 280 140, 405 100 S 655 60, 780 100 S 905 140, 930 100" stroke="#67e8f9" stroke-width="1.2" opacity=".5"/>
+        <line x1="480" y1="70" x2="480" y2="130" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <circle cx="480" cy="100" r="9" fill="#fbbf24"/>
+        <circle cx="480" cy="100" r="16" stroke="#fbbf24" stroke-width="1" opacity=".5"/>
+        <text x="480" y="52" fill="#e8eef7" font-size="14" text-anchor="middle" font-weight="700" font-family="system-ui">qubit</text>
+        <text x="120" y="160" fill="#9fb0c7" font-size="13" font-family="system-ui">transmission-line resonator</text>
+        <text x="840" y="160" fill="#9fb0c7" font-size="13" font-family="system-ui">standing wave</text>
+      </svg>
+      <figcaption>An on-chip transmission-line resonator: a standing microwave wave held in a superconducting line, with the qubit coupled at an antinode. Diagram is illustrative, not a device drawing.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="wrap">
+    <div class="eyebrow">Try it — a classical resonance demo (labelled, not measured data)</div>
+    <h2>Drive a resonator and watch Q do its work</h2>
+    <p class="lede">This is a <b>classical simulation of resonator physics</b> — a driven damped oscillator. It is not a quantum-hardware result and it is not measured device data. Drag the drive frequency across the resonance. The response peaks at the resonant frequency and falls away on either side — the Lorentzian shape. Raise the quality factor <b>Q</b> and the peak narrows: that is what Q means. Lower it and the peak broadens and flattens.</p>
+
+    <div class="demo-grid">
+      <div class="panel">
+        <h3>Resonance curve</h3>
+        <p class="hint">Response amplitude (relative) vs. drive frequency, normalised to 1 at resonance.</p>
+        <canvas id="curve" width="640" height="300"></canvas>
+      </div>
+      <div class="panel">
+        <h3>The oscillator, live</h3>
+        <p class="hint">The same oscillator driven at your chosen frequency. High Q rings up slowly — and rings down slowly.</p>
+        <canvas id="trace" width="520" height="300"></canvas>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="ctl">
+        <label for="freq">Drive frequency <output id="freqOut">1.00 × f₀</output></label>
+        <input type="range" id="freq" min="0.5" max="1.5" step="0.001" value="1">
+      </div>
+      <div class="ctl">
+        <label for="q">Quality factor Q <output id="qOut">50</output></label>
+        <input type="range" id="q" min="0.7" max="2.7" step="0.01" value="1.7">
+      </div>
+    </div>
+
+    <div class="chips">
+      <div class="chip"><div class="k">Drive / resonance</div><div class="v" id="chipFreq">1.00</div></div>
+      <div class="chip"><div class="k">Quality factor Q</div><div class="v" id="chipQ">50</div></div>
+      <div class="chip"><div class="k">Steady-state amplitude (relative)</div><div class="v" id="chipAmp">1.00</div></div>
+      <div class="chip"><div class="k">Linewidth Δf / f₀ ≈ 1/Q</div><div class="v" id="chipWidth">0.020</div></div>
+    </div>
+
+    <p class="caption"><b>Classical simulation only.</b> A real superconducting resonator is measured at millikelvin temperatures with a microwave tone; this curve shows the shape of the physics, not a device&rsquo;s performance.</p>
+  </div>
+</section>
+
+<section id="field">
+  <div class="wrap">
+    <div class="eyebrow">The field</div>
+    <h2>Three results that anchor this page</h2>
+    <div class="field-label">Independent field research — not Qresonator work</div>
+    <p class="lede">Three published results anchor this page. None of them is a Qresonator result, and none of them is a product benchmark. Each is cited in full.</p>
+
+    <div class="papers">
+      <article class="paper">
+        <div class="num">1 · Circuit QED is born</div>
+        <h3>Wallraff et al., 2004</h3>
+        <p class="cite">Wallraff, Schuster, Blais, Frunzio, Huang, Majer, Kumar, Girvin &amp; Schoelkopf, &ldquo;Strong coupling of a single photon to a superconducting qubit using circuit quantum electrodynamics,&rdquo; <i>Nature</i> <b>431</b>, 162–167 (2004). DOI: <a href="https://doi.org/10.1038/nature02851">10.1038/nature02851</a> · <a href="https://www.nature.com/articles/nature02851">nature.com</a></p>
+        <p>A superconducting two-level system (a Cooper-pair box) was coupled to an on-chip cavity formed by a <b>superconducting transmission-line resonator</b>. The experiment demonstrated the <b>strong-coupling regime in a solid-state system</b>: vacuum Rabi splitting, coherent superpositions between qubit and a single photon, and high-fidelity dispersive quantum non-demolition readout of the qubit state when detuned.</p>
+      </article>
+
+      <article class="paper">
+        <div class="num">2 · Resonators above one million</div>
+        <h3>Megrant et al., 2012</h3>
+        <p class="cite">Megrant, Neill, Barends, Chiaro, Chen, Feigl, Kelly, Lucero, Mariantoni, O&rsquo;Malley, Sank, Vainsencher, Wenner, White, Yin, Zhao, Palmstrøm, Martinis &amp; Cleland, &ldquo;Planar superconducting resonators with internal quality factors above one million,&rdquo; <i>Applied Physics Letters</i> <b>100</b>, 113510 (2012). DOI: <a href="https://doi.org/10.1063/1.3693409">10.1063/1.3693409</a></p>
+        <p>Planar coplanar-waveguide resonators with internal quality factors <b>above ten million at high microwave powers</b>, and <b>over one million at low powers</b> — the best low-power results approaching two million at about one photon in the resonator — achieved by making very smooth, clean interfaces between the aluminum metallization and the underlying single-crystal sapphire substrate. These are internal quality factors of <b>bare resonators, not qubit coherence times</b>.</p>
+      </article>
+
+      <article class="paper">
+        <div class="num">3 · A cavity that protects coherence</div>
+        <h3>Paik et al., 2011</h3>
+        <p class="cite">Paik, Schuster, Bishop, Kirchmair, Catelani, Sears, Johnson, Reagor, Frunzio, Glazman, Girvin, Devoret &amp; Schoelkopf, &ldquo;Observation of high coherence in Josephson junction qubits measured in a three-dimensional circuit QED architecture,&rdquo; <i>Physical Review Letters</i> <b>107</b>, 240501 (2011). DOI: <a href="https://doi.org/10.1103/PhysRevLett.107.240501">10.1103/PhysRevLett.107.240501</a> · <a href="https://arxiv.org/abs/1105.4652">arXiv:1105.4652</a></p>
+        <p>A transmon qubit in a <b>three-dimensional waveguide cavity</b>: qubit coherence improved by more than an order of magnitude — energy relaxation times <b>up to 60 µs</b>, dephasing times of <b>10–20 µs</b> without spin echo, and a cavity lifetime of <b>about 50 µs</b>. The authors note: <b>&ldquo;Attaining sufficient coherence is a requirement for realizing a large-scale quantum computer.&rdquo;</b></p>
+      </article>
+    </div>
+
+    <div class="scope">
+      <b>Scope note.</b> What this section does not show: no item above is a Qresonator result, a sensing result, or a product benchmark. Sensing, networking, and dynamical machine-learning applications are not demonstrated by the work cited here. Wallraff et al. (2004) is cited for strong coupling and readout, not for high Q — its own resonator quality factor was modest; the high-Q evidence is Megrant et al. (2012) alone.
+    </div>
+  </div>
+</section>
+
+<section id="where">
+  <div class="wrap">
+    <div class="eyebrow">Where resonators matter — field level, from the cited work</div>
+    <h2>Three places the resonator does the work</h2>
+    <div class="areas">
+      <div class="area">
+        <h3>Quantum computing</h3>
+        <p>The resonator couples qubits and reads them out — the <b>strong-coupling regime and dispersive readout</b> of Wallraff et al. (2004), and the three-dimensional cavity architecture of Paik et al. (2011).</p>
+      </div>
+      <div class="area">
+        <h3>Quantum memory and buses</h3>
+        <p>The cavity stores photons and acts as an <b>entanglement bus</b> — the three-dimensional cavity of Paik et al. (2011) and the transmission-line resonator of Wallraff et al. (2004).</p>
+      </div>
+      <div class="area">
+        <h3>High-Q resonator engineering</h3>
+        <p>Planar superconducting resonators with internal quality factors <b>above one million at low powers</b> — Megrant et al. (2012).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mission">
+  <div class="wrap">
+    <div class="eyebrow">Mission · Vision · Beliefs</div>
+    <h2>What this page is for</h2>
+    <div class="mvb">
+      <div class="card">
+        <h3>Mission</h3>
+        <p><b>Push the limits of quantum coherence and control.</b></p>
+      </div>
+      <div class="card">
+        <h3>Vision</h3>
+        <p><b>Quantum resonators as foundational, high-value building blocks</b> across computing, sensing, and hybrid intelligence platforms.</p>
+      </div>
+      <div class="card beliefs">
+        <h3>What We Believe</h3>
+        <ul>
+          <li><b>Coherence is the ultimate resource</b> — every quantum system lives or dies by it.</li>
+          <li><b>The best quantum systems emerge from resonators that combine physics-first design with engineering rigor.</b></li>
+          <li><b>Practical impact comes from resonators that work in real systems</b> — not just in papers.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="asp">These are beliefs and aspirations, not claims about current work.</p>
+  </div>
+</section>
+
+<section id="interest">
+  <div class="wrap">
+    <div class="eyebrow">Register interest — expressions of interest only</div>
+    <h2>Tell us what you would do with a better resonator</h2>
+    <p class="lede">This collects expressions of interest only — no product, data, briefing, partnership, or newsletter is offered, and nothing here promises access to hardware.</p>
+    <form action="https://formsubmit.co/whish39238@mypacks.net" method="POST">
+      <input type="hidden" name="_subject" value="QRESONATOR — expression of interest">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <div class="frow">
+        <label for="name">Name</label>
+        <input id="name" name="Name" type="text" required autocomplete="name">
+      </div>
+      <div class="frow">
+        <label for="email">Email</label>
+        <input id="email" name="Email" type="email" required autocomplete="email">
+      </div>
+      <div class="frow">
+        <label for="use">What would you use a resonator for?</label>
+        <select id="use" name="What would you use a resonator for?" required>
+          <option value="" selected>Choose one…</option>
+          <option>Quantum computing</option>
+          <option>Sensing and metrology</option>
+          <option>Quantum networking</option>
+          <option>Dynamical machine learning</option>
+          <option>Something else</option>
+        </select>
+      </div>
+      <div class="frow">
+        <label for="notes">Anything else?</label>
+        <textarea id="notes" name="Anything else?"></textarea>
+      </div>
+      <button type="submit">Register interest</button>
+    </form>
+    <p class="caption">Form delivery is confirmed only after a live test once the page is hosted. No confirmation is claimed here.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="wordmark"><b>Q</b>resonator.com</div>
+    <p>Qresonator.com — an introduction to quantum resonators. This page summarises published research by other groups and carries a classical resonance demo. It offers no product, data, briefing, partnership, or newsletter. Sources are cited in full in &ldquo;The field&rdquo; above.</p>
+  </div>
+</footer>
+
+<script>
+/* Classical driven damped oscillator demo.
+   Physics: x'' = -w0^2 x - (w0/Q) x' + F0 cos(w t), with w = r*w0.
+   Force amplitude is scaled so the steady-state amplitude at resonance is 1:
+   F0 = w0^2 / Q  =>  A_res = F0 / (gamma * w0) = 1.
+   Response curve (normalised): A(r)/A(1) = 1 / (Q * sqrt((1-r^2)^2 + (r/Q)^2)).
+*/
+(function () {
+  var w0 = 2 * Math.PI * 0.6;          // display frequency: 0.6 Hz, visible oscillation
+  var curve = document.getElementById('curve');
+  var trace = document.getElementById('trace');
+  var cctx = curve.getContext('2d');
+  var tctx = trace.getContext('2d');
+  var freqEl = document.getElementById('freq');
+  var qEl = document.getElementById('q');
+  var freqOut = document.getElementById('freqOut');
+  var qOut = document.getElementById('qOut');
+  var chipFreq = document.getElementById('chipFreq');
+  var chipQ = document.getElementById('chipQ');
+  var chipAmp = document.getElementById('chipAmp');
+  var chipWidth = document.getElementById('chipWidth');
+
+  var state = { r: 1.0, Q: 50, x: 0, v: 0, t: 0 };
+
+  function resp(r, Q) {
+    return 1 / (Q * Math.sqrt(Math.pow(1 - r * r, 2) + Math.pow(r / Q, 2)));
+  }
+
+  function fitCanvas(cv) {
+    var dpr = window.devicePixelRatio || 1;
+    var w = cv.clientWidth, h = cv.clientHeight;
+    if (cv.width !== w * dpr || cv.height !== h * dpr) {
+      cv.width = w * dpr; cv.height = h * dpr;
+    }
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+
+  function drawCurve() {
+    var c = fitCanvas(curve), ctx = c.ctx, W = c.w, H = c.h;
+    var padL = 44, padR = 14, padT = 14, padB = 28;
+    var x0 = padL, x1 = W - padR, y0 = padT, y1 = H - padB;
+    ctx.clearRect(0, 0, W, H);
+    // gridlines
+    ctx.strokeStyle = 'rgba(30,47,77,.7)'; ctx.lineWidth = 1;
+    ctx.fillStyle = '#6b7d97'; ctx.font = '11px system-ui';
+    [0, 0.5, 1.0].forEach(function (g) {
+      var y = y1 - g * (y1 - y0);
+      ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+      ctx.fillText(g.toFixed(1), 8, y + 4);
+    });
+    ctx.fillText('0.5', x0, H - 8);
+    ctx.fillText('1.0 (f₀)', x0 + (x1 - x0) * 0.5 - 12, H - 8);
+    ctx.fillText('1.5', x1 - 18, H - 8);
+    ctx.fillText('drive frequency  f / f₀  →', x0 + (x1 - x0) * 0.5 - 62, 12);
+    // curve: dense sampling so narrow high-Q peaks are not missed
+    var N = 2000, rMin = 0.5, rMax = 1.5;
+    ctx.beginPath();
+    for (var i = 0; i <= N; i++) {
+      var r = rMin + (rMax - rMin) * i / N;
+      var a = resp(r, state.Q);
+      var px = x0 + (r - rMin) / (rMax - rMin) * (x1 - x0);
+      var py = y1 - Math.min(a, 1.05) * (y1 - y0);
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.strokeStyle = '#22d3ee'; ctx.lineWidth = 2; ctx.stroke();
+    // resonance marker
+    var rx = x0 + (1 - rMin) / (rMax - rMin) * (x1 - x0);
+    ctx.setLineDash([4, 4]); ctx.strokeStyle = 'rgba(251,191,36,.6)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(rx, y0); ctx.lineTo(rx, y1); ctx.stroke();
+    ctx.setLineDash([]);
+    // current drive point
+    var dx = x0 + (state.r - rMin) / (rMax - rMin) * (x1 - x0);
+    var dy = y1 - Math.min(resp(state.r, state.Q), 1.05) * (y1 - y0);
+    ctx.beginPath(); ctx.arc(dx, dy, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#fbbf24'; ctx.fill();
+    ctx.beginPath(); ctx.arc(dx, dy, 9, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(251,191,36,.5)'; ctx.stroke();
+  }
+
+  function drawTrace() {
+    // draws the recorded history; integration happens in tick()
+    var c = fitCanvas(trace), ctx = c.ctx, W = c.w, H = c.h;
+    var padL = 10, padR = 10, padT = 14, padB = 14;
+    var x0 = padL, x1 = W - padR, y0 = padT, y1 = H - padB;
+    var midY = (y0 + y1) / 2, amp = (y1 - y0) / 2 * 0.85;
+    ctx.clearRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(30,47,77,.7)';
+    ctx.beginPath(); ctx.moveTo(x0, midY); ctx.lineTo(x1, midY); ctx.stroke();
+    // time window: last 6 seconds, re-simulated from the recorded history
+    var window = 6.0;
+    var hist = state.hist;
+    var n = hist.length;
+    if (n < 2) return;
+    // drive (faint amber) and response (cyan)
+    ctx.beginPath();
+    for (var j = 0; j < n; j++) {
+      var px = x0 + (hist[j].t - (state.t - window)) / window * (x1 - x0);
+      var py = midY - hist[j].d * amp;
+      if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.strokeStyle = 'rgba(251,191,36,.45)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.beginPath();
+    for (var k = 0; k < n; k++) {
+      var qx = x0 + (hist[k].t - (state.t - window)) / window * (x1 - x0);
+      var qy = midY - hist[k].x * amp;
+      if (k === 0) ctx.moveTo(qx, qy); else ctx.lineTo(qx, qy);
+    }
+    ctx.strokeStyle = '#22d3ee'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#6b7d97'; ctx.font = '11px system-ui';
+    ctx.fillText('— response', x0 + 4, y0 + 12);
+    ctx.fillStyle = 'rgba(251,191,36,.8)';
+    ctx.fillText('— drive', x0 + 96, y0 + 12);
+  }
+
+  function resetOsc() {
+    state.x = 0; state.v = 0; state.t = 0; state.hist = [];
+  }
+
+  function render() {
+    var r = parseFloat(freqEl.value);
+    var Q = Math.round(Math.pow(10, parseFloat(qEl.value)));
+    state.r = r; state.Q = Q;
+    freqOut.textContent = r.toFixed(2) + ' × f₀';
+    qOut.textContent = String(Q);
+    chipFreq.textContent = r.toFixed(2);
+    chipQ.textContent = String(Q);
+    chipAmp.textContent = resp(r, Q).toFixed(2);
+    chipWidth.textContent = (1 / Q).toFixed(3);
+    drawCurve();
+  }
+
+  freqEl.addEventListener('input', function () { render(); resetOsc(); });
+  qEl.addEventListener('input', function () { render(); resetOsc(); });
+
+  resetOsc();
+  render();
+
+  var last = performance.now();
+  function tick(now) {
+    var dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    // record history for the trace window
+    var w = state.r * w0, gamma = w0 / state.Q, F0 = w0 * w0 / state.Q;
+    var steps = Math.max(1, Math.ceil(dt / 0.001));
+    var h = dt / steps;
+    for (var i = 0; i < steps; i++) {
+      var a = -w0 * w0 * state.x - gamma * state.v + F0 * Math.cos(w * state.t);
+      state.v += a * h;
+      state.x += state.v * h;
+      state.t += h;
+      state.hist.push({ t: state.t, x: state.x, d: Math.cos(w * state.t) });
+    }
+    var cutoff = state.t - 6.0;
+    while (state.hist.length && state.hist[0].t < cutoff) state.hist.shift();
+    drawTrace();
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
